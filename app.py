@@ -127,7 +127,8 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     name = request.form['image']
-    img = Image.open("templates/"+name)
+    #img = Image.open("templates/"+name)
+    img = Image.open(name)
     info_dict = for_items(img)
     pay_dict = for_payment(img)
     info_dict['Payment information'] = pay_dict
