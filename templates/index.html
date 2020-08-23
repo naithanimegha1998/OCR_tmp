@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Extracting text from Invoice</title>
+</head>
+<body>
+
+<div class="login">
+    <h1 style="color: red">Invoice OCR</h1>
+    <form  action="{{ url_for('predict')}}"  method="post"><br><br>
+         <label>Select file to upload:</label><br><br>
+         <input type="file" id="file" name="image" required="required" />
+
+
+            <button type="submit" value="submit"> Predict</button>
+
+    </form>
+
+{% for info in prediction_text %}
+    {% if info=='items' %}
+        Items : {{ prediction_text[info] }} <br><br><br>
+    {% endif %}
+    {% if info=='Sub_Total' %}
+        Sub_Total : {{ prediction_text[info] }} <br><br><br>
+    {% endif %}
+    {% if info== 'Payment information' %}
+         Payment information : {{ prediction_text[info] }} <br><br><br>
+    {% endif %}
+
+{% endfor %}
+
+    
+
+</div>
+
+
+</body>
+</html>
