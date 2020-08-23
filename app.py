@@ -3,8 +3,7 @@ from flask import Flask, jsonify, render_template, request
 from PIL import Image
 import cv2
 import pytesseract
-import sqlite3
-from sqlite3 import Error
+
 
 import re
 
@@ -79,44 +78,10 @@ def for_payment(img):
     return pay_dict
 
 
-def create_connection(db_file):
-    """ create a database connection to a SQLite database """
-    conn = None
-    try:
-        conn = sqlite3.connect(db_file)
-        print(sqlite3.version)
-    except Error as e:
-        print(e)
-    finally:
-
-        return conn
 
 
-def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement
-    :param conn: Connection object
-    :param create_table_sql: a CREATE TABLE statement (query)
-    :return:
-    """
-    try:
-        c = conn.cursor()
-        c.execute(create_table_sql)
-    except Error as e:
-        print(e)
 
-def insert_invoice(conn, values):
-    """
-    Insert a new invoice into the invoicess table
-    :param conn:
-    :param values:
-    :return: invoice id
-    """
-    sql = ''' INSERT INTO invoices(items, Sub_Total, Account_Number, Account_Name, Bank_Details)
-              VALUES(?,?,?,?,?) '''
-    cur = conn.cursor()
-    cur.execute(sql, values)
-    conn.commit()
-    return cur.lastrowid
+
 
 
 
@@ -133,37 +98,7 @@ def predict():
     pay_dict = for_payment(img)
     info_dict['Payment information'] = pay_dict
 
-    # Inserting values into data base
-    # "C:\Sqlite\db" this path should exist beforehand
-    database = r"C:\Sqlite\db\tmp_invoice.db"
 
-    sql_create_invoices_table = """ CREATE TABLE IF NOT EXISTS invoices (
-                                            id integer PRIMARY KEY,
-                                            items text NOT NULL,
-                                            Sub_Total text,
-                                            Account_Number text,
-                                            Account_Name text,
-                                            Bank_Details text
-                                        ); """
-    conn = create_connection(database)
-    if conn is not None:
-        # create invoices table
-        create_table(conn, sql_create_invoices_table)
-
-    else:
-        print("Error! cannot create the database connection.")
-
-    with conn:
-        values = []
-        for k, v in info_dict.items():
-            if isinstance(v, dict):
-                for val in v.values():
-                    values.append(val)
-            else:
-                values.append(str(v))
-
-        values = tuple(values)
-        invoice_id = insert_invoice(conn, values)
 
     return render_template('index.html', ** {'prediction_text' :info_dict})
 
