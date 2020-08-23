@@ -7,7 +7,6 @@ Werkzeug==1.0.1
 numpy==1.16.4
 pandas==1.0.3
 pytesseract==0.3.4
-opencv==3.4.1
 opencv-python==4.2.0.34
 sqlite==3.31.1
 pillow==7.1.2
